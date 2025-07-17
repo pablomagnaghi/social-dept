@@ -1,4 +1,5 @@
-# Getting Started with This Next.js 15 App (Using pnpm)
+# Social dept finances
+A full stack next.js App Router typesafe typescript application
 
 ## Project Overview
 The selected topic for this app is Finances, focusing on handling transactions across different categories. This showcases basic functionality for both the frontend and backend layers.
@@ -89,22 +90,6 @@ pnpm start      # Start production server
 pnpm lint       # Run ESLint
 pnpm format     # Format code with Prettier
 ```
-
----
-
-## 🧪 Troubleshooting
-
-* **CSS not working?**
-
-  * Make sure Tailwind is set up correctly in `postcss.config.js` and `tailwind.config.ts`
-
-* **Clerk server error?**
-
-  * Verify your Clerk keys and make sure you're using `server-only` in server components
-
-* **Relative fetch fails in Server Component?**
-
-  * Use `process.env.NEXT_PUBLIC_SITE_URL` to build absolute URLs
 
 ---
 
