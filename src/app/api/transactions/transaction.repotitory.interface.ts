@@ -15,6 +15,15 @@ export interface TransactionSelect {
   categoryId: number;
 }
 
+export interface TransactionByMontht {
+  id: number;
+  userId: string;
+  amount: number | string;
+  transactionDate: Date | string;
+  description: string;
+  categoryId: number;
+  transactionType: "income" | "expense" | null;
+}
 export interface RecentTransaction {
   id: number;
   description: string;
@@ -36,7 +45,7 @@ export interface TransactionRepositoryInterface {
     userId: string,
     month: number,
     year: number
-  ): Promise<TransactionSelect[]>;
+  ): Promise<TransactionByMontht[]>;
   getTransactionYearsRange(userId: string): Promise<number[]>;
   getTransaction(
     userId: string,

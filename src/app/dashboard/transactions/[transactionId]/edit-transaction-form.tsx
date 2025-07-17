@@ -53,7 +53,7 @@ export default function EditTransactionForm({
     router.push(
       `/dashboard/transactions?month=${
         data.transactionDate.getMonth() + 1
-      }&year=${data.transactionDate.getFullYear()}`
+      }&year=${data.transactionDate.getFullYear()}`,
     );
   };
   return (

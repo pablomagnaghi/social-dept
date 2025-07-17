@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import {
   MonthlyCashflow,
   RecentTransaction,
+  TransactionByMontht,
   TransactionInsert,
   TransactionRepositoryInterface,
   TransactionSelect,
@@ -38,7 +39,7 @@ export class TransactionRepository implements TransactionRepositoryInterface {
     userId: string,
     month: number,
     year: number
-  ): Promise<TransactionSelect[]> {
+  ): Promise<TransactionByMontht[]> {
     const earliestDate = new Date(year, month - 1, 1);
     const latestDate = new Date(year, month, 0);
 

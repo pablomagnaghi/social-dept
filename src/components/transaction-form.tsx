@@ -4,17 +4,28 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { addDays, format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
- 
-
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
-import { Category } from "@/app/api/categories/category.type";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Calendar } from "./ui/calendar";
 import { Input } from "./ui/input";
+import { Category } from "@/app/api/categories/category.type";
 
 export const transactionFormSchema = z.object({
   transactionType: z.enum(["income", "expense"]),
@@ -46,7 +57,7 @@ export default function TransactionForm({
   onSubmit,
   defaultValues,
 }: Props) {
-  const form = useForm<z.infer<typeof transactionFormSchema>>({
+  const form = useForm({
     resolver: zodResolver(transactionFormSchema),
     defaultValues: {
       amount: 0,
@@ -60,7 +71,7 @@ export default function TransactionForm({
 
   const transactionType = form.watch("transactionType");
   const filteredCategories = categories.filter(
-    (category) => category.type === transactionType
+    (category) => category.type === transactionType,
   );
 
   return (
@@ -109,7 +120,7 @@ export default function TransactionForm({
                   <FormControl>
                     <Select
                       onValueChange={field.onChange}
-                      value={field.value.toString()}
+                      value={field.value!.toString()}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -145,11 +156,11 @@ export default function TransactionForm({
                           variant={"outline"}
                           className={cn(
                             "w-full justify-start text-left font-normal",
-                            !field.value && "text-muted-foreground"
+                            !field.value && "text-muted-foreground",
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {field.value ? (
+                          {field.value && field.value instanceof Date ? (
                             format(field.value, "PPP")
                           ) : (
                             <span>Pick a date</span>
@@ -159,9 +170,12 @@ export default function TransactionForm({
                       <PopoverContent className="w-auto p-0">
                         <Calendar
                           mode="single"
-                          selected={field.value}
+                          selected={
+                            field.value instanceof Date
+                              ? field.value
+                              : undefined
+                          }
                           onSelect={field.onChange}
-                          initialFocus
                           disabled={{
                             after: new Date(),
                           }}
@@ -178,11 +192,23 @@ export default function TransactionForm({
             control={form.control}
             name="amount"
             render={({ field }) => {
+              const value = field.value as number | "" | undefined;
+
               return (
                 <FormItem>
                   <FormLabel>Amount</FormLabel>
                   <FormControl>
-                    <Input {...field} type="number" />
+                    <Input
+                      type="number"
+                      value={value === undefined || value === null ? "" : value}
+                      onChange={(e) => {
+                        // Convert input string back to number or undefined
+                        const val = e.target.value;
+                        field.onChange(val === "" ? undefined : Number(val));
+                      }}
+                      onBlur={field.onBlur}
+                      name={field.name}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

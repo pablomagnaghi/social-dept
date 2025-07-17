@@ -22,7 +22,7 @@ export const categoriesTable = createTable("categories", (t) => ({
 
 export const transactionsTable = createTable(
   "transactions",
-  (t) => ({
+  () => ({
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     userId: text("user_id").notNull(),
     description: text().notNull(),

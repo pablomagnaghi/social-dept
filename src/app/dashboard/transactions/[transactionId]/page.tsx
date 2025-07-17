@@ -20,10 +20,12 @@ export default async function EditTransactionPage({
   const categories = await getCategories();
   const transaction = await getTransaction(transactionId);
 
-  if (!transaction) {
+  // Narrow the type by checking for error property
+  if (!transaction || "error" in transaction) {
     notFound();
   }
 
+  // Now TypeScript knows transaction has id and transactionDate
   return (
     <Card className="mt-4 max-w-screen-md">
       <CardHeader>
@@ -31,13 +33,26 @@ export default async function EditTransactionPage({
           <span>Edit Transaction</span>
           <DeleteTransactionDialog
             transactionId={transaction.id}
-            transactionDate={transaction.transactionDate}
+            transactionDate={
+              typeof transaction.transactionDate === "string"
+                ? transaction.transactionDate
+                : transaction.transactionDate.toISOString()
+            }
           />
         </CardTitle>
       </CardHeader>
       <CardContent>
         <EditTransactionForm
-          transaction={transaction}
+          transaction={{
+            id: transaction.id,
+            categoryId: transaction.categoryId,
+            amount: String(transaction.amount),
+            description: transaction.description,
+            transactionDate:
+              typeof transaction.transactionDate === "string"
+                ? transaction.transactionDate
+                : transaction.transactionDate.toISOString(),
+          }}
           categories={categories}
         />
       </CardContent>

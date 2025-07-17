@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins } from 'next/font/google';
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import { ChartColumnBigIcon } from "lucide-react";
@@ -12,13 +12,13 @@ import {
 } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import UserDropdown from "./user-dropdown";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster"; 
 
 const poppins = Poppins({
- weight: ['400', '600'],
- subsets: ['latin'],
- display: 'swap',
- variable: "--font-poppins",
+  weight: ["400", "600"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
@@ -40,7 +40,8 @@ export default function RootLayout({
               href="/"
               className="font-bold text-2xl flex gap-1 items-center"
             >
-              <ChartColumnBigIcon className="text-lime-500" /> Social dept finances
+              <ChartColumnBigIcon className="text-lime-500" /> Social dept
+              finances
             </Link>
             <div>
               <SignedOut>
@@ -59,7 +60,7 @@ export default function RootLayout({
             </div>
           </nav>
           {children}
-          <Toaster/>
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>

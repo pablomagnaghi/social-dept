@@ -8,7 +8,8 @@ export default function Home() {
     <main className="min-h-[400px] h-[calc(100vh-80px)] flex items-center justify-center bg-white relative">
       <div className="relative z-10 text-center flex flex-col gap-4">
         <h1 className="text-5xl font-bold flex gap-1 items-center justify-center">
-          <ChartColumnBigIcon className="text-lime-500" size={60} /> Social dept finances
+          <ChartColumnBigIcon className="text-lime-500" size={60} /> Social dept
+          finances
         </h1>
         <p className="text-2xl">Track your finances with ease</p>
         <SignedIn>

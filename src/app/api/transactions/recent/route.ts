@@ -4,7 +4,7 @@ import { TransactionHandler } from "../transaction.handler";
 import { getUserIdOrUnauthorized } from "../../auth/user.auth";
 
 export async function GET() {
-  const userId = getUserIdOrUnauthorized()
+  const userId = await getUserIdOrUnauthorized();  // <-- add await here
 
   if (!userId) {
     return NextResponse.json(

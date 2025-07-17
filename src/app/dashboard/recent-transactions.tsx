@@ -16,6 +16,24 @@ import { getRecentTransactions } from "../api/transactions/transaction.action";
 
 export default async function RecentTransactions() {
   const transactions = await getRecentTransactions();
+
+  // If error, show message or empty state
+  if ("error" in transactions) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Transactions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-center py-10 text-lg text-muted-foreground">
+            {transactions.message || "Failed to load transactions."}
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Now TypeScript knows transactions is RecentTransaction[]
   return (
     <Card>
       <CardHeader>
@@ -32,13 +50,13 @@ export default async function RecentTransactions() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {!transactions?.length && (
+        {!transactions.length && (
           <p className="text-center py-10 text-lg text-muted-foreground">
             You have no transactions yet. Start by hitting &quot;Create
             New&quot; to create your first transaction
           </p>
         )}
-        {!!transactions?.length && (
+        {!!transactions.length && (
           <Table className="mt-4">
             <TableHeader>
               <TableRow>
@@ -53,7 +71,10 @@ export default async function RecentTransactions() {
               {transactions.map((transaction) => (
                 <TableRow key={transaction.id}>
                   <TableCell>
-                    {format(transaction.transactionDate, "do MMM yyyy")}
+                    {format(
+                      new Date(transaction.transactionDate),
+                      "do MMM yyyy",
+                    )}
                   </TableCell>
                   <TableCell>{transaction.description}</TableCell>
                   <TableCell className="capitalize">

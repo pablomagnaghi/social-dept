@@ -20,13 +20,13 @@ export function CashflowContent({
     (prevValue: number, month) => {
       return prevValue + month.income;
     },
-    0
+    0,
   );
   const totalAnnualExpenses = annualCashflow.reduce(
     (prevValue: number, month) => {
       return prevValue + month.expenses;
     },
-    0
+    0,
   );
   const balance = totalAnnualIncome - totalAnnualExpenses;
 
@@ -70,7 +70,7 @@ export function CashflowContent({
                     <div>
                       {format(
                         new Date(today.getFullYear(), month - 1, 1),
-                        "MMM"
+                        "MMM",
                       )}
                     </div>
                   );
@@ -117,7 +117,7 @@ export function CashflowContent({
           <h2
             className={cn(
               "text-3xl font-bold",
-              balance >= 0 ? "text-lime-500" : "text-orange-500"
+              balance >= 0 ? "text-lime-500" : "text-orange-500",
             )}
           >
             ${numeral(balance).format("0,0[.]00")}

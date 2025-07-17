@@ -14,10 +14,21 @@ import { PencilIcon } from "lucide-react";
 import Link from "next/link";
 import { z } from "zod";
 import numeral from "numeral";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import Filters from "./filters";
-import { getTransactionsByMonth, getTransactionYearsRange } from "@/app/api/transactions/transaction.action";
+import {
+  getTransactionsByMonth,
+  getTransactionYearsRange,
+} from "@/app/api/transactions/transaction.action";
+import { getCategories } from "@/app/api/categories/category.action";
 
 const today = new Date();
 
@@ -40,16 +51,37 @@ export default async function TransactionsPage({
   searchParams: Promise<{ year?: string; month?: string }>;
 }) {
   const searchParamsValues = await searchParams;
-
   const { month, year } = searchSchema.parse(searchParamsValues);
 
   const selectedDate = new Date(year, month - 1, 1);
-   
+
   const transactions = await getTransactionsByMonth({ month, year });
-
-  console.log("transactions: ", transactions)
   const yearsRange = await getTransactionYearsRange();
+  const categories = await getCategories();
 
+  // Handle error case in yearsRange
+  if ("error" in yearsRange) {
+    return (
+      <div className="max-w-screen-xl mx-auto py-10">
+        <p className="text-center py-10 text-lg text-muted-foreground">
+          Failed to load years range: {yearsRange.message}
+        </p>
+      </div>
+    );
+  }
+
+  if (!transactions || "error" in transactions) {
+    return (
+      <div className="max-w-screen-xl mx-auto py-10">
+        <p className="text-center py-10 text-lg text-muted-foreground">
+          Failed to load transactions:{" "}
+          {transactions?.message || "Unknown error"}
+        </p>
+      </div>
+    );
+  }
+
+  // yearsRange is now guaranteed to be number[]
   return (
     <div className="max-w-screen-xl mx-auto py-10">
       <Breadcrumb>
@@ -65,6 +97,7 @@ export default async function TransactionsPage({
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
+
       <Card className="mt-4">
         <CardHeader>
           <CardTitle className="flex justify-between">
@@ -74,16 +107,19 @@ export default async function TransactionsPage({
             </div>
           </CardTitle>
         </CardHeader>
+
         <CardContent>
           <Button asChild>
             <Link href="/dashboard/transactions/new">New Transaction</Link>
           </Button>
-          {!transactions?.length && (
+
+          {!transactions.length && (
             <p className="text-center py-10 text-lg text-muted-foreground">
               There are no transactions for this month
             </p>
           )}
-          {!!transactions?.length && (
+
+          {transactions.length > 0 && (
             <Table className="mt-4">
               <TableHeader>
                 <TableRow>
@@ -95,6 +131,7 @@ export default async function TransactionsPage({
                   <TableHead />
                 </TableRow>
               </TableHeader>
+
               <TableBody>
                 {transactions.map((transaction) => (
                   <TableRow key={transaction.id}>
@@ -113,9 +150,12 @@ export default async function TransactionsPage({
                         {transaction.transactionType}
                       </Badge>
                     </TableCell>
-                    <TableCell>{transaction.category}</TableCell>
                     <TableCell>
-                      £{numeral(transaction.amount).format("0,0[.]00")}
+                      {categories.find((c) => c.id === transaction.categoryId)
+                        ?.name ?? "Unknown"}
+                    </TableCell>
+                    <TableCell>
+                      ${numeral(transaction.amount).format("0,0[.]00")}
                     </TableCell>
                     <TableCell className="text-right">
                       <Button

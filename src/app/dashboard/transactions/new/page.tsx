@@ -12,7 +12,7 @@ import NewTransactionForm from "./new-transaction-form"; // adjust path if neede
 import { getCategories } from "@/app/api/categories/category.action";
 
 export default async function NewTransactionPage() {
-  const categories = await getCategories()
+  const categories = await getCategories();
 
   return (
     <div className="max-w-screen-xl mx-auto py-10">

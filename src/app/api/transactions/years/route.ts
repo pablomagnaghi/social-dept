@@ -21,7 +21,4 @@ export async function GET(req: Request) {
 
   return NextResponse.json(result.data, { status: result.status });
 }
-function auth(): { userId: any; } | PromiseLike<{ userId: any; }> {
-  throw new Error("Function not implemented.");
-}
 

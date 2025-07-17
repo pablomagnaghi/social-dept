@@ -80,14 +80,18 @@ export async function GET(req: Request) {
   }
 }
 
-export async function PATCH(req: Request, { params }: Params) {
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const userId = await getUserIdOrUnauthorized();
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const { id } = await params;
 
-  const transactionId = parseInt(params.id, 10);
+  const transactionId = parseInt(id, 10);
   if (isNaN(transactionId)) {
     return NextResponse.json(
       { error: "Invalid transaction ID" },
@@ -112,14 +116,17 @@ export async function PATCH(req: Request, { params }: Params) {
   return NextResponse.json({ success: true }, { status: result.status });
 }
 
-export async function DELETE(_req: Request, { params }: Params) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const userId = await getUserIdOrUnauthorized();
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
-  const transactionId = parseInt(params.id, 10);
+  const { id } = await params;
+  const transactionId = parseInt(id, 10);
 
   if (isNaN(transactionId)) {
     return NextResponse.json(

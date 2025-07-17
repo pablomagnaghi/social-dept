@@ -18,6 +18,50 @@ const updateTransactionSchema = transactionSchema.and(
   })
 );
 
+export const createTransaction = async (data: {
+  amount: number;
+  transactionDate: string;
+  description: string;
+  categoryId: number;
+}) => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return {
+      error: true,
+      message: "Unauthorized",
+    };
+  }
+
+  const validation = transactionSchema.safeParse(data);
+
+  if (!validation.success) {
+    return {
+      error: true,
+      message: validation.error.issues[0].message,
+    };
+  }
+
+  try {
+    const newTransaction = await repo.create({
+      ...data,
+      userId,
+    });
+
+    return {
+      id: newTransaction.id,
+    };
+  } catch (error) {
+    console.error("Transaction creation failed:", error);
+    return {
+      error: true,
+      message: "Internal server error",
+    };
+  }
+};
+
+
+
 export async function getTransactionYearsRange() {
   const userId = await getUserIdOrUnauthorized();
   if (!userId) {

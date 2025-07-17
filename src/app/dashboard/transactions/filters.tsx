@@ -49,16 +49,16 @@ export default function Filters({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-  {Array.isArray(yearsRange) && yearsRange.length > 0 ? (
-    yearsRange.map((year) => (
-      <SelectItem key={year} value={`${year}`}>
-        {year}
-      </SelectItem>
-    ))
-  ) : (
-    <div className="text-muted">No years available</div>
-  )}
-</SelectContent>
+          {Array.isArray(yearsRange) && yearsRange.length > 0 ? (
+            yearsRange.map((year) => (
+              <SelectItem key={year} value={`${year}`}>
+                {year}
+              </SelectItem>
+            ))
+          ) : (
+            <div className="text-muted">No years available</div>
+          )}
+        </SelectContent>
       </Select>
       <Button asChild>
         <Link
