@@ -3,11 +3,13 @@ import { categoriesTable, transactionsTable } from "@/db/schema";
 
 import { format } from "date-fns";
 import {
+  MonthlyCashflow,
+  RecentTransaction,
   TransactionInsert,
   TransactionRepositoryInterface,
   TransactionSelect,
 } from "./transaction.repotitory.interface";
-import { and, desc, eq, gte, lte, asc } from "drizzle-orm";
+import { and, desc, eq, gte, lte, asc, sql, sum } from "drizzle-orm";
 
 export class TransactionRepository implements TransactionRepositoryInterface {
   async create(transaction: TransactionInsert): Promise<TransactionSelect> {
@@ -167,5 +169,77 @@ export class TransactionRepository implements TransactionRepositoryInterface {
     if (result.rowCount === 0) {
       throw new Error("Transaction not found or unauthorized");
     }
+  }
+
+  async getAnnualCashflow(
+    userId: string,
+    year: number
+  ): Promise<MonthlyCashflow[]> {
+    const monthExtract = sql`EXTRACT(MONTH FROM ${transactionsTable.transactionDate})`;
+
+    const rawCashflow = await db
+      .select({
+        month: monthExtract,
+        totalIncome: sum(
+          sql`CASE WHEN ${categoriesTable.type} = 'income' THEN ${transactionsTable.amount} ELSE 0 END`
+        ),
+        totalExpenses: sum(
+          sql`CASE WHEN ${categoriesTable.type} = 'expense' THEN ${transactionsTable.amount} ELSE 0 END`
+        ),
+      })
+      .from(transactionsTable)
+      .leftJoin(
+        categoriesTable,
+        eq(transactionsTable.categoryId, categoriesTable.id)
+      )
+      .where(
+        and(
+          eq(transactionsTable.userId, userId),
+          sql`EXTRACT(YEAR FROM ${transactionsTable.transactionDate}) = ${year}`
+        )
+      )
+      .groupBy(monthExtract);
+
+    // Build full 12 months with 0 values for months without data
+    const annualCashflow: MonthlyCashflow[] = Array.from(
+      { length: 12 },
+      (_, i) => {
+        const monthNum = i + 1;
+        const monthlyData = rawCashflow.find(
+          (entry) => Number(entry.month) === monthNum
+        );
+
+        return {
+          month: monthNum,
+          income: Math.round(Number(monthlyData?.totalIncome ?? 0) * 100) / 100,
+          expenses:
+            Math.round(Number(monthlyData?.totalExpenses ?? 0) * 100) / 100,
+        };
+      }
+    );
+
+    return annualCashflow;
+  }
+
+  async getRecentTransactions(userId: string): Promise<RecentTransaction[]> {
+    const transactions = await db
+      .select({
+        id: transactionsTable.id,
+        description: transactionsTable.description,
+        amount: transactionsTable.amount,
+        transactionDate: transactionsTable.transactionDate,
+        category: categoriesTable.name,
+        transactionType: categoriesTable.type,
+      })
+      .from(transactionsTable)
+      .leftJoin(
+        categoriesTable,
+        eq(transactionsTable.categoryId, categoriesTable.id)
+      )
+      .where(eq(transactionsTable.userId, userId))
+      .orderBy(desc(transactionsTable.transactionDate))
+      .limit(5);
+
+    return transactions;
   }
 }

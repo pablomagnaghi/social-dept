@@ -159,4 +159,48 @@ export class TransactionHandler {
       };
     }
   }
+
+  async getAnnualCashflowAction(userId: string, year: number) {
+    try {
+      const data = await this.repo.getAnnualCashflow(userId, year);
+
+      return {
+        success: true,
+        status: 200,
+        data,
+      };
+    } catch (error) {
+      const msg = (error as Error).message;
+      const notFound =
+        msg.includes("not found") || msg.includes("unauthorized");
+
+      return {
+        error: true,
+        status: notFound ? 404 : 500,
+        message: msg || "Internal Server Error",
+      };
+    }
+  }
+
+   async getRecentTransactions(userId: string) {
+    try {
+      const transactions = await this.repo.getRecentTransactions(userId);
+
+      return {
+        success: true,
+        status: 200,
+        data: transactions,
+      };
+    } catch (error) {
+      const msg = (error as Error).message;
+      const notFound =
+        msg.includes("not found") || msg.includes("unauthorized");
+
+      return {
+        error: true,
+        status: notFound ? 404 : 500,
+        message: msg || "Internal Server Error",
+      };
+    }
+  }
 }

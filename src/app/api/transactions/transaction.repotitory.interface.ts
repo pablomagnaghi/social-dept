@@ -15,6 +15,21 @@ export interface TransactionSelect {
   categoryId: number;
 }
 
+export interface RecentTransaction {
+  id: number;
+  description: string;
+  amount: string;
+  transactionDate: string;
+  category: string | null;
+  transactionType: "income" | "expense" | null;
+};
+
+export interface MonthlyCashflow {
+  month: number;
+  income: number;
+  expenses: number;
+}
+
 export interface TransactionRepositoryInterface {
   create(transaction: TransactionInsert): Promise<TransactionSelect>;
   getByMonth(
@@ -36,4 +51,15 @@ export interface TransactionRepositoryInterface {
     userId: string;
   }): Promise<void>;
   deleteTransaction(userId: string, transactionId: number): Promise<void>;
+  getAnnualCashflow(
+    userId: string,
+    year: number
+  ): Promise<
+    {
+      month: number;
+      income: number;
+      expenses: number;
+    }[]
+  >;
+  getRecentTransactions(userId: string): Promise<RecentTransaction[]>;
 }

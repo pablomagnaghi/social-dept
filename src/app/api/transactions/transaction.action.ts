@@ -107,5 +107,38 @@ export async function deleteTransaction(transactionId: number) {
     };
   }
 
-  return repo.deleteTransaction(userId, transactionId)
+  return repo.deleteTransaction(userId, transactionId);
+}
+
+export async function getAnnualCashflow(year: number) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return {
+      error: true,
+      message: "Unauthorized",
+    };
+  }
+
+  try {
+    return await repo.getAnnualCashflow(userId, year);
+  } catch (error) {
+    return {
+      error: true,
+      message: (error as Error).message || "Internal Server Error",
+    };
+  }
+}
+
+export async function getRecentTransactions() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return {
+      error: true,
+      message: "Unauthorized",
+    };
+  }
+
+  return repo.getRecentTransactions(userId);
 }
