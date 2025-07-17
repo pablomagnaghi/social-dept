@@ -36,7 +36,7 @@ export class TransactionRepository implements TransactionRepositoryInterface {
     userId: string,
     month: number,
     year: number
-  ): Promise<Transaction[]> {
+  ): Promise<TransactionSelect[]> {
     const earliestDate = new Date(year, month - 1, 1);
     const latestDate = new Date(year, month, 0);
 
