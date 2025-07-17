@@ -1,5 +1,12 @@
 # Getting Started with This Next.js 15 App (Using pnpm)
 
+## Project Overview
+The selected topic for this app is Finances, focusing on handling transactions across different categories. This showcases basic functionality for both the frontend and backend layers.
+- Users can create, view, and manage financial transactions.
+- Transactions are organized by categories and types ("income" | "expense").
+- The backend uses handler functions for API routes to implement a RESTful API, promoting clear separation of concerns and making it easy to consume from the frontend.
+- The use of interfaces in the repository layer allows easy mocking for testing database interactions without relying on a real database.
+
 This project is built using **Next.js 15**, **pnpm**, **TypeScript**, and includes common configurations like **Tailwind CSS**, **ShadCN**, **Clerk Authentication**, and **Drizzle ORM**.
 
 ---
@@ -34,7 +41,7 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
 ### 4. **Run database migrations (if applicable)**
 
-If you're using Drizzle:
+Using Drizzle:
 
 ```bash
 pnpm drizzle-kit push
@@ -45,6 +52,11 @@ Or, generate and apply migrations:
 ```bash
 pnpm drizzle-kit generate
 pnpm drizzle-kit push
+```
+
+Create categories
+```bash
+pnpm run seed:categories
 ```
 
 ### 5. **Run the development server**
@@ -65,20 +77,6 @@ Now open [http://localhost:3000](http://localhost:3000) in your browser.
 * **ShadCN UI** for accessible components
 * **Drizzle ORM** for database access
 * **Clerk** for authentication
-
----
-
-## 📂 Common Directories
-
-```bash
-/src
-  /app              # App router pages
-  /components       # Reusable components
-  /api              # Server-side API handlers
-  /db               # Drizzle config and schema
-  /hooks            # Custom React hooks
-  /styles           # Tailwind CSS and global styles
-```
 
 ---
 

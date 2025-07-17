@@ -34,4 +34,38 @@ export class TransactionHandler {
       };
     }
   }
+
+  async getTransactionsByMonth(userId: string, month: number, year: number) {
+    try {
+      const transactions = await this.repo.getByMonth(userId, month, year);
+      return {
+        success: true,
+        status: 200,
+        data: transactions,
+      };
+    } catch (error) {
+      return {
+        error: true,
+        status: 500,
+        message: (error as Error).message || "Internal Server Error",
+      };
+    }
+  }
+
+  async getTransactionYearsRange(userId: string) {
+    try {
+      const years = await this.repo.getTransactionYearsRange(userId);
+      return {
+        success: true,
+        status: 200,
+        data: years,
+      };
+    } catch (error) {
+      return {
+        error: true,
+        status: 500,
+        message: (error as Error).message || "Internal Server Error",
+      };
+    }
+  }
 }

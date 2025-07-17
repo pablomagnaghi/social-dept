@@ -12,7 +12,7 @@ import {
 } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import UserDropdown from "./user-dropdown";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 
 const poppins = Poppins({
  weight: ['400', '600'],
