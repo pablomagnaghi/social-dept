@@ -9,7 +9,7 @@ export interface TransactionInsert {
 export interface TransactionSelect {
   id: number;
   userId: string;
-  amount: string;
+  amount: number | string;
   transactionDate: Date | string;
   description: string;
   categoryId: number;
