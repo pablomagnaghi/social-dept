@@ -17,8 +17,7 @@ import numeral from "numeral";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import Filters from "./filters";
-import { getTransactionYearsRange } from "@/app/api/transactions/years/getTransactionYearsRange";
-import { getTransactionsByMonth } from "@/app/api/transactions/getTransactionsByMonth";
+import { getTransactionsByMonth, getTransactionYearsRange } from "@/app/api/transactions/transaction.action";
 
 const today = new Date();
 
@@ -142,4 +141,3 @@ export default async function TransactionsPage({
     </div>
   );
 }
-

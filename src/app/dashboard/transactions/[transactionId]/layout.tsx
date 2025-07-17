@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,12 +7,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import Link from "next/link";
-import NewTransactionForm from "./new-transaction-form"; // adjust path if needed
-import { getCategories } from "@/app/api/categories/category.action";
 
-export default async function NewTransactionPage() {
-  const categories = await getCategories()
-
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="max-w-screen-xl mx-auto py-10">
       <Breadcrumb>
@@ -31,19 +26,11 @@ export default async function NewTransactionPage() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>New Transaction</BreadcrumbPage>
+            <BreadcrumbPage>Edit Transaction</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-
-      <Card className="mt-4 max-w-screen-md">
-        <CardHeader>
-          <CardTitle>New Transaction</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <NewTransactionForm categories={categories} />
-        </CardContent>
-      </Card>
+      {children}
     </div>
   );
 }

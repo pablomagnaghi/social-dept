@@ -1,14 +1,40 @@
 import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
 import { TransactionRepository } from "./transaction.repository";
 import { TransactionHandler } from "./transaction.handler";
+import { getUserIdOrUnauthorized } from "../auth/user.auth";
 
 const repo = new TransactionRepository();
 const handler = new TransactionHandler(repo);
+interface Params {
+  params: {
+    id: string;
+  };
+}
+
+function parseMonthYear(url: URL): {
+  month?: number;
+  year?: number;
+  error?: string;
+} {
+  const monthParam = url.searchParams.get("month");
+  const yearParam = url.searchParams.get("year");
+
+  if (!monthParam || !yearParam) {
+    return { error: "Missing 'month' or 'year' query parameters" };
+  }
+
+  const month = parseInt(monthParam, 10);
+  const year = parseInt(yearParam, 10);
+
+  if (isNaN(month) || isNaN(year)) {
+    return { error: "'month' and 'year' must be valid numbers" };
+  }
+
+  return { month, year };
+}
 
 export async function POST(req: Request) {
-  const { userId } = await auth();
-
+  const userId = await getUserIdOrUnauthorized();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -27,38 +53,23 @@ export async function POST(req: Request) {
 }
 
 export async function GET(req: Request) {
-  const { userId } = await auth();
-
+  const userId = await getUserIdOrUnauthorized();
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const url = new URL(req.url);
-  const monthParam = url.searchParams.get("month");
-  const yearParam = url.searchParams.get("year");
+  const { month, year, error } = parseMonthYear(url);
 
-  if (!monthParam || !yearParam) {
-    return NextResponse.json(
-      { error: "Missing 'month' or 'year' query parameters" },
-      { status: 400 }
-    );
-  }
-
-  const month = parseInt(monthParam, 10);
-  const year = parseInt(yearParam, 10);
-
-  if (isNaN(month) || isNaN(year)) {
-    return NextResponse.json(
-      { error: "'month' and 'year' must be valid numbers" },
-      { status: 400 }
-    );
+  if (error) {
+    return NextResponse.json({ error }, { status: 400 });
   }
 
   try {
     const transactions = await handler.getTransactionsByMonth(
       userId,
-      month,
-      year
+      month!,
+      year!
     );
     return NextResponse.json(transactions, { status: 200 });
   } catch (error) {
@@ -67,4 +78,64 @@ export async function GET(req: Request) {
       { status: 500 }
     );
   }
+}
+
+export async function PATCH(req: Request, { params }: Params) {
+  const userId = await getUserIdOrUnauthorized();
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const transactionId = parseInt(params.id, 10);
+  if (isNaN(transactionId)) {
+    return NextResponse.json(
+      { error: "Invalid transaction ID" },
+      { status: 400 }
+    );
+  }
+
+  const body = await req.json();
+
+  const result = await handler.updateTransaction(
+    { ...body, id: transactionId },
+    userId
+  );
+
+  if ("error" in result) {
+    return NextResponse.json(
+      { error: result.message },
+      { status: result.status }
+    );
+  }
+
+  return NextResponse.json({ success: true }, { status: result.status });
+}
+
+export async function DELETE(_req: Request, { params }: Params) {
+  const userId = await getUserIdOrUnauthorized();
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const transactionId = parseInt(params.id, 10);
+
+  if (isNaN(transactionId)) {
+    return NextResponse.json(
+      { error: "Invalid transaction ID" },
+      { status: 400 }
+    );
+  }
+
+  const result = await handler.deleteTransaction(userId, transactionId);
+
+  if (result.error) {
+    return NextResponse.json(
+      { error: result.message },
+      { status: result.status }
+    );
+  }
+
+  return NextResponse.json({ success: true }, { status: result.status });
 }

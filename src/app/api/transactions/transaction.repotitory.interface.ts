@@ -17,6 +17,23 @@ export interface TransactionSelect {
 
 export interface TransactionRepositoryInterface {
   create(transaction: TransactionInsert): Promise<TransactionSelect>;
-  getByMonth(userId: string, month: number, year: number): Promise<TransactionSelect[]>;
-  getTransactionYearsRange(userId: string): Promise<number[]>; 
+  getByMonth(
+    userId: string,
+    month: number,
+    year: number
+  ): Promise<TransactionSelect[]>;
+  getTransactionYearsRange(userId: string): Promise<number[]>;
+  getTransaction(
+    userId: string,
+    transactionId: number
+  ): Promise<TransactionSelect | null>;
+  updateTransaction(data: {
+    id: number;
+    transactionDate: Date | string;
+    description: string;
+    amount: number;
+    categoryId: number;
+    userId: string;
+  }): Promise<void>;
+  deleteTransaction(userId: string, transactionId: number): Promise<void>;
 }

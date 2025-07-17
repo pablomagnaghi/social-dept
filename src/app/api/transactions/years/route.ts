@@ -1,13 +1,13 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { TransactionHandler } from "../transaction.handler";
 import { TransactionRepository } from "../transaction.repository";
+import { getUserIdOrUnauthorized } from "../../auth/user.auth";
 
 const repo = new TransactionRepository();
 const handler = new TransactionHandler(repo);
 
 export async function GET(req: Request) {
-  const { userId } = await auth();
+  const userId = await getUserIdOrUnauthorized();
 
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -21,3 +21,7 @@ export async function GET(req: Request) {
 
   return NextResponse.json(result.data, { status: result.status });
 }
+function auth(): { userId: any; } | PromiseLike<{ userId: any; }> {
+  throw new Error("Function not implemented.");
+}
+

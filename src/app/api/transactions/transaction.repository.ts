@@ -105,4 +105,67 @@ export class TransactionRepository implements TransactionRepositoryInterface {
 
     return years;
   }
+
+  async getTransaction(
+    userId: string,
+    transactionId: number
+  ): Promise<TransactionSelect | null> {
+    const [transaction] = await db
+      .select()
+      .from(transactionsTable)
+      .where(
+        and(
+          eq(transactionsTable.id, transactionId),
+          eq(transactionsTable.userId, userId)
+        )
+      );
+
+    return transaction;
+  }
+
+  async updateTransaction(data: {
+    id: number;
+    transactionDate: string;
+    description: string;
+    amount: number;
+    categoryId: number;
+    userId: string;
+  }): Promise<void> {
+    const result = await db
+      .update(transactionsTable)
+      .set({
+        transactionDate: data.transactionDate,
+        description: data.description,
+        amount: data.amount.toString(),
+        categoryId: data.categoryId,
+      })
+      .where(
+        and(
+          eq(transactionsTable.id, data.id),
+          eq(transactionsTable.userId, data.userId)
+        )
+      );
+
+    if (result.rowCount === 0) {
+      throw new Error("Transaction not found or unauthorized");
+    }
+  }
+
+  async deleteTransaction(
+    userId: string,
+    transactionId: number
+  ): Promise<void> {
+    const result = await db
+      .delete(transactionsTable)
+      .where(
+        and(
+          eq(transactionsTable.id, transactionId),
+          eq(transactionsTable.userId, userId)
+        )
+      );
+
+    if (result.rowCount === 0) {
+      throw new Error("Transaction not found or unauthorized");
+    }
+  }
 }
