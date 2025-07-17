@@ -107,3 +107,13 @@ pnpm format     # Format code with Prettier
   * Use `process.env.NEXT_PUBLIC_SITE_URL` to build absolute URLs
 
 ---
+
+# Example
+App deployed using vercel, open [social-dept-finances](https://social-dept-xi.vercel.app/)
+
+## Useful links
+- [NestJS](https://nextjs.org/)
+- [clerk](https://clerk.com/)
+- [shadcn](https://ui.shadcn.com/)
+- [drizzle](https://orm.drizzle.team/)
+- [vercel](https://vercel.com/)
