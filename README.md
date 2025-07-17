@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Getting Started with This Next.js 15 App (Using pnpm)
 
-## Getting Started
+This project is built using **Next.js 15**, **pnpm**, **TypeScript**, and includes common configurations like **Tailwind CSS**, **ShadCN**, **Clerk Authentication**, and **Drizzle ORM**.
 
-First, run the development server:
+---
+
+## 🚀 Quickstart
+
+### 1. **Clone the repository**
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/your-username/your-repo.git
+cd your-repo
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. **Install dependencies**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. **Environment Variables**
 
-## Learn More
+Create a `.env.local` file in the root of your project:
 
-To learn more about Next.js, take a look at the following resources:
+```env
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
+DATABASE_URL=your_postgres_url
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+> Replace values with your actual environment secrets.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 4. **Run database migrations (if applicable)**
 
-## Deploy on Vercel
+If you're using Drizzle:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+pnpm drizzle-kit push
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Or, generate and apply migrations:
+
+```bash
+pnpm drizzle-kit generate
+pnpm drizzle-kit push
+```
+
+### 5. **Run the development server**
+
+```bash
+pnpm dev
+```
+
+Now open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 📦 Tech Stack
+
+* **Next.js 15** (App Router)
+* **pnpm** (fast package manager)
+* **Tailwind CSS** for styling
+* **ShadCN UI** for accessible components
+* **Drizzle ORM** for database access
+* **Clerk** for authentication
+
+---
+
+## 📂 Common Directories
+
+```bash
+/src
+  /app              # App router pages
+  /components       # Reusable components
+  /api              # Server-side API handlers
+  /db               # Drizzle config and schema
+  /hooks            # Custom React hooks
+  /styles           # Tailwind CSS and global styles
+```
+
+---
+
+## 🛠 Scripts
+
+```bash
+pnpm dev        # Start development server
+pnpm build      # Create production build
+pnpm start      # Start production server
+pnpm lint       # Run ESLint
+pnpm format     # Format code with Prettier
+```
+
+---
+
+## 🧪 Troubleshooting
+
+* **CSS not working?**
+
+  * Make sure Tailwind is set up correctly in `postcss.config.js` and `tailwind.config.ts`
+
+* **Clerk server error?**
+
+  * Verify your Clerk keys and make sure you're using `server-only` in server components
+
+* **Relative fetch fails in Server Component?**
+
+  * Use `process.env.NEXT_PUBLIC_SITE_URL` to build absolute URLs
+
+---
